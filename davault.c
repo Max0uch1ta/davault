@@ -7,6 +7,7 @@ void create_vault(char* vault_name);
 int main(int argc, char *argv[]) {
 	// Check that necessary directories are present
 	system("[ ! -d \"~/.local/share/davault/.vaults/\" ] && mkdir -p ~/.local/share/davault/.vaults/");
+	char* current_vault;
 
 	printf("Welcome to DaVault\n");
 	printf("What would you like to do?\n");
@@ -32,26 +33,21 @@ int main(int argc, char *argv[]) {
 				break;
 			case 1:
 				// ask user for file name
-				char vault_name[30];
+				char *vault_name;
 				printf("\nVault name > ");
-				scanf("%s", &vault_name);
-				// create new file
+				scanf("%ms", &vault_name);
+				// create new vault
 				create_vault(vault_name);
-
-				// Create gpg command for system() function
-				char command[50];
-				sprintf(command, "gpg -o ~/.local/share/davault/.vaults/%s.gpg -c %s", vault_name, vault_name);
-
-				printf("Please provide a password\n");
-				system(command);
-
-				// remove text file
-				char rm_file[35];
-				sprintf(rm_file,"rm %s", vault_name);
-				system(rm_file);
+				current_vault = vault_name;
+			// Open a vault
 			case 2:
-				// Get vault name
-				// Look for vault
+				while (1) {
+					// Get vault name
+					printf("What vault do you want to open?\n> ");
+					char* tmp;
+					scanf("%ms", &tmp);
+					// Test if vault exists
+					
 				// If vault exists, login
 				// else error
 			case 3:
@@ -80,4 +76,17 @@ void create_vault(char* vault_name) {
 	fptr = fopen(vault_name, "w");
 
 	fclose(fptr);
+
+
+	// Create gpg command for system() function
+	char command[50];
+	sprintf(command, "gpg -o ~/.local/share/davault/.vaults/%s.gpg -c %s", vault_name, vault_name);
+
+	printf("Please provide a password\n");
+	system(command);
+
+	// remove text file
+	char rm_file[35];
+	sprintf(rm_file,"rm %s", vault_name);
+	system(rm_file);
 }
