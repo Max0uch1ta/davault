@@ -13,6 +13,7 @@
 void create_vault(char* vault_name);
 char * get_vaults(char* path, char* file, bool encrypted);
 void open_vault(char* vault_name);
+void get_creds(char* line);
 
 
 int main(int argc, char *argv[]) {
@@ -20,6 +21,7 @@ int main(int argc, char *argv[]) {
 	system("[ ! -d \"~/.local/share/davault/.vaults/\" ] && mkdir -p ~/.local/share/davault/.vaults/");
 	FILE* current_vault;
 	char* vault_name;
+	bool vault_open = false;
 
 	printf("Welcome to DaVault\n");
 	printf("What would you like to do?\n");
@@ -59,10 +61,19 @@ int main(int argc, char *argv[]) {
 				if (vault_name == NULL) {
 					open_vault(vault_name);
 				}
-				// open file in csv
-				// ask for source, username and password
-				// add line
-				// close file
+				// open file 
+				current_vault = fopen("vault", "a");
+				if (current_vault == NULL) {
+					printf("Could not open file.\n");
+				}
+				// Get credentials dor stdin
+				char line[100];
+				get_creds(line);
+				
+				// write credential to file.
+				if (fprintf(current_vault, "%s", line) < 0) { printf("Error writing to file");} 
+
+				fclose(current_vault); // close the file
 				break;
 			case 4:
 				// if no vault open, ask what vault
@@ -153,3 +164,16 @@ void open_vault(char* vault_name) {
 }
 
 
+// ask for source, username and password
+void get_creds(char* line) {
+	// Must add verifivation for ; 
+	char source[25];
+	char username[25];
+	char password[50];
+	printf("What is the source of the pwd\n>");
+	if (fgets(source, 25, stdin) == NULL) { printf("Error getting source");}
+	if (fgets(username, 25, stdin) == NULL) { printf("Error getting source");}
+	if (fgets(password, 55, stdin) == NULL) { printf("Error getting source");}
+
+	snprintf(line, 100, "%s;%s;%s", source,username,password);
+}
