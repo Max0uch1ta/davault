@@ -85,7 +85,19 @@ int main(int argc, char *argv[]) {
 
 				break;
 			case 4:
-				// if no vault open, ask what vault
+
+				// if no vault open, ask what vault to open
+				if (!vault_open) {
+					vault_name = open_vault();
+					vault_open = true;
+					
+				}
+				// open file 
+				current_vault = fopen("vault", "a");
+				if (current_vault == NULL) {
+					printf("Could not open file.\n");
+				}
+
 				// open csv and turn to hashtable
 				// close file and rm 
 				// ask for source
